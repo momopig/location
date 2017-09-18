@@ -13,7 +13,7 @@ def note():
     lat = request.values.get('lat')
     if lng is not None and lat is not None:
         with lock:
-            f = open('/Users/Jamter/Downloads/pm-go/noteLocation.gpx', 'w')
+            f = open('./noteLocation.gpx', 'w')
             f.write('<gpx creator="Xcode" version="1.1"><wpt lat="%s" lon="%s"><name>PokemonLocation</name></wpt></gpx>' % (lat, lng))
             f.close()
             os.system('osascript clickMenu.applescript')
