@@ -48,7 +48,7 @@
 		D22505C61F4ACDC300BDA432 /* locationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = locationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D22505CA1F4ACDC300BDA432 /* locationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = locationUITests.swift; sourceTree = "<group>"; };
 		D22505CC1F4ACDC300BDA432 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D2851A9D1F4ADBCC00E10C6D /* noteLocation.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = noteLocation.gpx; path = "../../Downloads/pm-go/noteLocation.gpx"; sourceTree = "<group>"; };
+		D2851A9D1F4ADBCC00E10C6D /* noteLocation.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = noteLocation.gpx; path = "./pm-go/noteLocation.gpx"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
