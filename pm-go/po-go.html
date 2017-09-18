@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>坐标模拟地图</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <style type="text/css">
+        .adcode {
+            height: 45px;
+            background-color: #fff;
+            padding-left: 10px;
+            padding-right: 10px;
+            border: 1px solid #969696;
+            position: absolute;
+            font-size: 12px;
+            right: 10px;
+            bottom: 20px;
+            border-radius: 3px;
+            line-height: 45px;
+        }
+    </style>
+    <style type="text/css">
+        .move_btn{width:100px;height:100px;line-height: 50px; border: 1px solid red;background-color: #00ff00;text-align: center;vertical-align: middle;}
+        .move_btn_middle{margin-left:50px;}
+        .main{width:100%;}
+        .right{width:80%;}
+        .left{width:20%;}
+    </style>
+    <script type="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=d2070228ecd837473ca45e78d5d03d9b&plugin=AMap.DistrictSearch"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+<div class="main">
+<div class="left">
+    <input id="btn_up" class="move_btn move_btn_middle" type="button" value="up" /><br/>
+    <input id="btn_left" class="move_btn" type="button" value="left"/>
+    <input id="btn_right" class="move_btn" type="button" value="right"/><br/>
+    <input id="btn_down" class="move_btn move_btn_middle" type="button" value="down" />
+</div>
+<div id="container" class="right"></div>
+</div>
+<script type="text/javascript">
+    function sleep(d){
+      for(var t = Date.now();Date.now() - t <= d;);
+    }
+    function moveInterval() {
+        var randomNum = parseInt(40 * Math.random());
+        var number = "0.0000" + (60 + randomNum);
+        console.log("moveInterval:" + number);
+        return parseFloat(number);
+    }
+    function changeCurrentLocation(direction, cur) {
+        var longitude = cur.getPosition().getLng();
+        var latitude = cur.getPosition().getLat();
+        if (direction == "left") {
+            longitude -= moveInterval();
+        } else if (direction == "right") {
+            longitude += moveInterval();
+        } else if (direction == "up") {
+            latitude += moveInterval();
+        }  else if (direction == "down") {
+            latitude -= moveInterval();
+        }
+        return {"lat" : latitude, "lng" : longitude};
+    }
+    function noteFile(cur) {
+        var data = {};
+        data['lng'] = cur.getPosition().getLng();
+        data['lat'] = cur.getPosition().getLat();
+        $.ajax({
+                type : "GET",
+                url : "http://127.0.0.1:5000/note",
+                data : data,
+                dataType : "JSON",
+                success : function (data) {
+                }
+        });
+    }
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        keyboardEnable: false,
+        //center: [126.644696,45.762237], //哈尔滨
+        center: [114.162952,22.282068], // 香港
+        //center: [151.2062,-33.8934], // 悉尼
+        zoom: 14
+    });
+    var cur = new AMap.Marker({map:map});
+    cur.setPosition(new AMap.LngLat(114.162952,22.282068));
+    map.on('click', function(e){
+        var lng = e.lnglat.getLng();
+        var lat = e.lnglat.getLat();
+        cur.setPosition(new AMap.LngLat(lng, lat));
+        noteFile(cur);
+    });
+    // 键盘上下左右
+    document.onkeydown=function(event){
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        var lng = cur.getPosition().getLng();
+        var lat = cur.getPosition().getLat();
+        if(e && e.keyCode==38){ // 按上
+            lat += moveInterval();
+        }
+        if(e && e.keyCode==40){ // 按下
+            lat -= moveInterval();
+        }            
+        if(e && e.keyCode==37){ // 左
+            lng -= moveInterval();
+        }
+        if(e && e.keyCode==39){ // 右
+            lng += moveInterval();
+        }
+        if(e && e.keyCode==65){
+            for (var i = 0; i < 200; i++) {
+                var d = parseInt(2*Math.random());
+                if (d == 0) {
+                    lat += 4 * moveInterval();
+                } else if (d == 1) {
+                    lng += 4 * moveInterval();
+                }
+                cur.setPosition(new AMap.LngLat(lng, lat));
+                noteFile(cur);
+                sleep(10000);
+            }
+        }
+        cur.setPosition(new AMap.LngLat(lng, lat));
+        noteFile(cur);
+    };
+    $(function(){
+        $(".move_btn").click(function(){
+            var direction = $(this).val();
+            var location = changeCurrentLocation(direction, cur);
+            cur.setPosition(new AMap.LngLat(location["lng"], location["lat"]));
+            noteFile(cur);
+        });
+    });
+</script>
+</body>
+</html>
+
